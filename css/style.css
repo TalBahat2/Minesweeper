@@ -1,0 +1,14 @@
+* {
+    text-align: center;
+}
+
+.cell {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+/* .border-container {
+    border: 10px;
+} */
