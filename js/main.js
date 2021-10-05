@@ -21,16 +21,11 @@ const FLAG = '🎏';
 
 // TODO model:
 // maybe integrate victory and lose check functions.
-// integrate the init with restart (a lot of double code lines)
+// maybe integrate the init with restart.
 
 // TODO dom:
-// cells keep size
-// timer - not move
-// add my name at the footer
-
-// bonus: 
-// 7 boom
-
+// objects in place
+// add name to footer
 
 function initGame() {
     gGame = {
@@ -89,7 +84,6 @@ function restart() {
     var elRestartButton = document.querySelector('.restart-button');
     elRestartButton.innerText = '🙂';
     var elHints = document.querySelectorAll('.hint');
-    console.log(elHints);
     for (var i = 0; i < elHints.length; i++) {
         elHints[i].style.display = 'inline-block';
         elHints[i].style.backgroundColor = '';
@@ -187,6 +181,7 @@ function cellClicked(elCell, cellI, cellJ) {
         return;
     }
     checkFirstClick(cellI, cellJ);
+    checkFirstClickSevenOrManualMode(cellI, cellJ);
     if (!gGame.isOn) return;
     if (gGame.isHintOn) {
         showNeighbors(cellI, cellJ);
@@ -213,7 +208,7 @@ function cellClicked(elCell, cellI, cellJ) {
         elCell.innerText = MINE;
         checkLose();
     }
-    checkVictory();
+    if (gGame.isOn) checkVictory();
 }
 
 function cellMarked(elCell, cellI, cellJ) {
@@ -447,9 +442,10 @@ function showSafeClick() {
 }
 
 function positionMinesManuallyOn() {
-    restart();
+    if (gLevel.SIZE === 4) changeLevel(4, 2, 2);
+    else if (gLevel.SIZE === 8) changeLevel(8, 12, 3);
+    else if (gLevel.SIZE === 8) changeLevel(12, 30, 3);
     gGame.isManualPosOn = true;
-    // gLevel.MINES;
 }
 
 function setMineManually(cellI, cellJ) {
@@ -460,7 +456,7 @@ function setMineManually(cellI, cellJ) {
         gGame.isManualPosOn = false;
         gGame.isOn = true;
         setMinesNegsCount(gBoard);
-        startTimer();
+        // startTimer();
         printBoard(gBoard);
     }
     gGame.minesToPos--;
@@ -501,7 +497,7 @@ function sevenBoom() {
         }
     }
     console.log(positions);
-    
+
     // place mines:
     for (var i = 0; i < positions.length; i++) {
         var currPos = positions[i];
@@ -509,8 +505,21 @@ function sevenBoom() {
     }
 
     gLevel.MINES = positions.length;
-    gGame.isOn = true;
+    gGame.lifeCount = gLevel.LIFE;
+    // gGame.isOn = true;
     setMinesNegsCount(gBoard);
-    startTimer();
+    // startTimer();
     printBoard(gBoard);
+}
+
+function checkFirstClickSevenOrManualMode(cellI, cellJ) {
+    // here I plan to start the timer for sevenBoom or costum mode.
+    if ((gGame.minesToPos || gGame.isSevenBoomOn) &&
+        gGame.shownNumsCount === 0 &&
+        gGame.markedCount === 0 &&
+        gGame.lifeCount === gLevel.LIFE &&
+        !gGame.isOn) {
+        gGame.isOn = true;
+        startTimer();
+    }
 }
