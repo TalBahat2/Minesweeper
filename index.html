@@ -9,14 +9,36 @@
 </head>
 <body onload="initGame()">
     <h1>Minesweeper</h1>
-    <button onclick="restart()">🙂</button>
+    <button class="restart-button" onclick="restart()">🙂</button>
     <br>
-    <button onclick="restart()">easy</button>
-    <button onclick="restart()">medium</button>
-    <button onclick="restart()">hard</button>
+    <button onclick="changeLevel(4, 2, 2)">easy</button>
+    <button onclick="changeLevel(8, 12, 3)">medium</button>
+    <button onclick="changeLevel(12, 30, 3)">hard</button>
+    <button onclick="positionMinesManuallyOn()">self costumed</button>
     <br>
-    <div>Timer: <span class="timer"></span></div>
-    <div class="board-container"></div>
+    <button onclick="undo()">undo</button>
+    <button onclick="sevenBoom()">7 Boom!</button>
+    <br>
+    <div>
+        <button onclick="showSafeClick()">safe click</button>
+        <h5><span class="safe-clicks-count">3</span> clicks available</h5>
+    </div>
+    
+    <div>
+        <div class="hint hint2" onclick="hintClicked(this)">💡</div>
+        <div class="hint hint1" onclick="hintClicked(this)">💡</div>
+        <div class="hint hint0" onclick="hintClicked(this)">💡</div>
+    </div>
+    <div>
+        <div class="life life2 hide">❤</div>
+        <div class="life life1">❤</div>
+        <div class="life life0">❤</div>
+    </div>
+    <div>Timer: <span class="timer">0</span></div>
+    <table class = "center">
+        <tbody class="board-container"></tbody>
+    </table>
+    <div>best time: <span class="record">0</span></div>
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>
 </body>

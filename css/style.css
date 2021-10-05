@@ -1,19 +1,46 @@
-* {
+body {
     text-align: center;
+}
+
+h1 {
+    text-shadow: 2px 2px 5px rgba(86, 106, 163, 0.5);
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .cell {
     width: 40px;
     height: 40px;
     text-align: center;
-    font-size: 1.5em;
+    text-size-adjust: auto;
+    font-size: 1.4em;
     border: 2px solid black;
+    display: table-cell;
+}
+
+.timer {
+    display: inline-block;
 }
 
 button{
     margin: 5px;
 }
 
-/* .border-container {
+.border-container {
     border: 10px;
-} */
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+}
+
+.life, .hint {
+    display: inline-block;
+}
+
+.hide {
+    display: none;
+}
