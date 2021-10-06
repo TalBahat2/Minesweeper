@@ -14,15 +14,10 @@
     <button onclick="changeLevel(4, 2, 2)">easy</button>
     <button onclick="changeLevel(8, 12, 3)">medium</button>
     <button onclick="changeLevel(12, 30, 3)">hard</button>
-    <button onclick="positionMinesManuallyOn()">self costumed</button>
     <br>
-    <button onclick="undo()">undo</button>
+    <button onclick="positionMinesManuallyOn()">self costumed</button>
     <button onclick="sevenBoom()">7 Boom!</button>
     <br>
-    <div>
-        <button onclick="showSafeClick()">safe click</button>
-        <h5><span class="safe-clicks-count">3</span> clicks available</h5>
-    </div>
     
     <div>
         <div class="hint hint2" onclick="hintClicked(this)">💡</div>
@@ -34,12 +29,22 @@
         <div class="life life1">❤</div>
         <div class="life life0">❤</div>
     </div>
-    <div>Timer: <span class="timer">0</span></div>
+    <div style="font-family: Arial;">Timer: <span class="timer">0</span></div>
+    <button style="background-color: rgb(172, 89, 89);" onclick="undo()">undo</button>
+    <button class="put-mines-message"></button>
+    <br>
+    <div>
+        <button style="background-color: rgb(148, 105, 105);" onclick="showSafeClick()">safe click</button>
+        <h5><span class="safe-clicks-count">3</span> safe clicks available</h5>
+    </div>
     <table class = "center">
         <tbody class="board-container"></tbody>
     </table>
-    <div>best time: <span class="record">0</span></div>
+    <div style="font-family: Arial;">Best time: <span class="record"></span></div>
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>
 </body>
+<footer>
+    <p>Created by Tal Bahat</p>
+</footer>
 </html>

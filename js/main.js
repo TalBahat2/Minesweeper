@@ -19,13 +19,20 @@ const FLAG = '🎏';
 // localStorage.removeItem('recordMedium')
 // localStorage.removeItem('recordHard')
 
+// bug fixes done:
+// timer of self costumed mode
+// 7 boom right bombs at 70's
+// changed auto of record (best time)
+// changed color of numbers
+// on self costumed mode, added a message with mines number
+
+
 // TODO model:
 // maybe integrate victory and lose check functions.
 // maybe integrate the init with restart.
 
 // TODO dom:
-// objects in place
-// add name to footer
+// buttons not to move
 
 function initGame() {
     gGame = {
@@ -46,7 +53,6 @@ function initGame() {
     changeDefaultOfRightClick(gBoard);
     clearInterval(gIntervalId);
     showRecord();
-    // printBoard(gBoard);
 
 }
 
@@ -192,12 +198,15 @@ function cellClicked(elCell, cellI, cellJ) {
 
     cell.isShown = true;
     gGame.stepsPositions.push({ i: cellI, j: cellJ });
-    elCell.style.backgroundColor = 'lightgrey';
+    elCell.style.backgroundColor = '#CFB740';
     if (!cell.isMine) {
         // model
         gGame.shownNumsCount++;
         // dom
-        if (cell.minesAroundCount !== 0) elCell.innerText = cell.minesAroundCount;
+        if (cell.minesAroundCount !== 0) {
+            elCell.innerText = cell.minesAroundCount;
+            paintNumber(elCell, cell.minesAroundCount);
+        }
         else expandShown(gBoard, cellI, cellJ);
 
     } else {
@@ -212,6 +221,7 @@ function cellClicked(elCell, cellI, cellJ) {
 }
 
 function cellMarked(elCell, cellI, cellJ) {
+    if (gGame.isManualPosOn) return;
     checkFirstClick(cellI, cellJ);
     if (!gGame.isOn) return;
     var cell = gBoard[cellI][cellJ];
@@ -228,7 +238,6 @@ function cellMarked(elCell, cellI, cellJ) {
         //model
         gBoard[cellI][cellJ].isMarked = false;
         gGame.markedCount--;
-        console.log(gGame.markedCount);
         // dom
         elCell.innerText = '';
     }
@@ -259,6 +268,37 @@ function startTimer() {
         // dom
         elTimer.innerText = currTime;
     }, 1000);
+}
+
+function paintNumber(elCell, minesAroundCount) {
+    var color;
+    switch (minesAroundCount) {
+        case 1:
+            color = 'blue';
+            break;
+        case 2:
+            color = 'green';
+            break;
+        case 3:
+            color = 'red';
+            break;
+        case 4:
+            color = 'navy';
+            break;
+        case 5:
+            color = 'brown';
+            break;
+        case 6:
+            color = 'purple';
+            break;
+        case 7:
+            color = 'pink';
+            break;
+        case 8:
+            color = 'black';
+            break;
+    }
+    elCell.style.color = color;
 }
 
 function checkVictory() {
@@ -370,13 +410,13 @@ function showRecord() {
     var elRecord = document.querySelector('.record');
     switch (gLevel.SIZE) {
         case 4:
-            elRecord.innerText = (localStorage.recordEasy) ? localStorage.recordEasy : 0;
+            elRecord.innerText = (localStorage.recordEasy) ? localStorage.recordEasy : "no record";
             break;
         case 8:
-            elRecord.innerText = (localStorage.recordMedium) ? localStorage.recordMedium : 0;
+            elRecord.innerText = (localStorage.recordMedium) ? localStorage.recordMedium : "no record";
             break;
         case 12:
-            elRecord.innerText = (localStorage.recordHard) ? localStorage.recordHard : 0;
+            elRecord.innerText = (localStorage.recordHard) ? localStorage.recordHard : "no record";
             break;
     }
 }
@@ -409,7 +449,6 @@ function showNeighbors(cellI, cellJ) {
 }
 
 function stopShowingNeighbors(shownCellsCoords) {
-    console.log(shownCellsCoords);
     for (var i = 0; i < shownCellsCoords.length; i++) {
         var currPos = shownCellsCoords[i];
         if (gBoard[currPos.i][currPos.j].isShown) continue;
@@ -427,7 +466,6 @@ function showSafeClick() {
             if (!cell.isMine && !cell.isShown) safePositions.push({ i: i, j: j });
         }
     }
-    console.log(safePositions.length);
     if (!safePositions.length) return;
     gGame.safeClicksAvailable--;
     var elSafeClicksCount = document.querySelector('.safe-clicks-count');
@@ -446,18 +484,17 @@ function positionMinesManuallyOn() {
     else if (gLevel.SIZE === 8) changeLevel(8, 12, 3);
     else if (gLevel.SIZE === 8) changeLevel(12, 30, 3);
     gGame.isManualPosOn = true;
+    openPutMinesMsg(gLevel.MINES);
 }
 
 function setMineManually(cellI, cellJ) {
-    console.log('mines to pos', gGame.minesToPos)
     if (gBoard[cellI][cellJ].isMine) return;
     gBoard[cellI][cellJ].isMine = true;
     if (gGame.minesToPos === 1) {
         gGame.isManualPosOn = false;
-        gGame.isOn = true;
         setMinesNegsCount(gBoard);
-        // startTimer();
         printBoard(gBoard);
+        showStartMsg();
     }
     gGame.minesToPos--;
 }
@@ -479,7 +516,6 @@ function undo() {
     elLastCell.innerText = '';
     lastcell.isShown = false;
 
-    // console.log(cell);
 }
 
 function sevenBoom() {
@@ -490,13 +526,12 @@ function sevenBoom() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard.length; j++) {
             if (count % 7 === 0 ||
-                count / 10 === 7 ||
+                Math.floor(count / 10) === 7 ||
                 count % 10 === 7)
                 positions.push({ i: i, j: j });
             count++;
         }
     }
-    console.log(positions);
 
     // place mines:
     for (var i = 0; i < positions.length; i++) {
@@ -506,15 +541,13 @@ function sevenBoom() {
 
     gLevel.MINES = positions.length;
     gGame.lifeCount = gLevel.LIFE;
-    // gGame.isOn = true;
     setMinesNegsCount(gBoard);
-    // startTimer();
     printBoard(gBoard);
 }
 
 function checkFirstClickSevenOrManualMode(cellI, cellJ) {
-    // here I plan to start the timer for sevenBoom or costum mode.
-    if ((gGame.minesToPos || gGame.isSevenBoomOn) &&
+    // start the timer and gGame.isOn=true for sevenBoom or costum mode.
+    if ((!gGame.minesToPos || gGame.isSevenBoomOn) &&
         gGame.shownNumsCount === 0 &&
         gGame.markedCount === 0 &&
         gGame.lifeCount === gLevel.LIFE &&
@@ -522,4 +555,23 @@ function checkFirstClickSevenOrManualMode(cellI, cellJ) {
         gGame.isOn = true;
         startTimer();
     }
+}
+
+function openPutMinesMsg(minesCount) {
+    // debugger;
+    var elModal = document.querySelector('.put-mines-message');
+    elModal.innerText = `place ${minesCount} mines`;
+    elModal.style.display = 'initial'
+    setTimeout(function() {
+        elModal.style.display = 'none';
+    }, 1000, elModal)
+}
+
+function showStartMsg() {
+    var elModal = document.querySelector('.put-mines-message');
+    elModal.innerText = 'You can Start!';
+    elModal.style.display = 'initial'
+    setTimeout(function() {
+        elModal.style.display = 'none';
+    }, 1000, elModal)
 }
